@@ -4,7 +4,6 @@ using BizHawk.Emulation.Common;
 using RLMatrix;
 using RLMatrix.Agents.Common;
 
-
 namespace AIHawk
 {
 
@@ -78,24 +77,25 @@ namespace AIHawk
             APISimpleton = EmulationAPI;
             LogUtility.Log("Setting Up " + APISimpleton.Emulation.GetGameInfo( ).Name);
 
-
         }
 
         /// <summary>
         /// Called after every emulation cycle has finished. Can be paused by pausing emulation. Can be advanced with frame advance.
         /// Currently setup to pause on start and frame advance manually with a hotkey in the emulator.
         /// </summary>
-        protected override  void UpdateAfter()
+        protected override void UpdateAfter()
         {
             //Check emergency stop button, allows running emulation without feeding the AI.
-            if ( IsAIRunning && MyAgentPPO != null)
+            if ( IsAIRunning && MyAgentPPO != null )
             {
                 LogUtility.Log("Emulator: Step! AI On");
                 Task.Run(
                     () => MyAgentPPO.Step( )).ContinueWith((t) =>
                 {
                     if ( t.IsFaulted )
+                    {
                         throw t.Exception;
+                    }
                 }).Wait( );
                 //await MyAgentPPO.Step( );
             }
@@ -103,7 +103,6 @@ namespace AIHawk
 
         private void ToggleAI(object sender, EventArgs e)
         {
-            //APISimpleton.EmuClient.Unpause( ); Delayed StackOverflow Exception???
 
             IsAIRunning = !IsAIRunning;
 
@@ -115,13 +114,15 @@ namespace AIHawk
                     LogUtility.Log("Emulator not found.");
                     return;
                 }
+
                 if ( !APISimpleton.Emulation.GetGameInfo( ).IsNullInstance( ) )
                 {
                     LogUtility.Log("Loading env...");
                     APISimpleton.EmuClient.Pause( );
-                    APISimpleton.SaveState.LoadSlot(1);
-                    EnvPPO = new List<IEnvironmentAsync<float[]>> { new BizHawkEnvironment( ).RLInit( ) };
+                    _ = APISimpleton.SaveState.LoadSlot(1);
+                    EnvPPO = [new BizHawkEnvironment( ).RLInit( )];
                     MyAgentPPO = new LocalDiscreteRolloutAgent<float[]>(OptsPPO, EnvPPO);
+                    APISimpleton.EmuClient.Unpause( );
                 }
             }
 
@@ -145,6 +146,6 @@ namespace AIHawk
             Enabled = true,
             Text = "Run AI"
         };
-        
+
     }
 }

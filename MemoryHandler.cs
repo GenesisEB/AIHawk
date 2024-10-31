@@ -3,8 +3,8 @@
 
     internal static class MemoryHandler
     {
-        internal static Dictionary<string, int> Observations = new Dictionary<string, int>();
-        internal static Dictionary<string, bool> Inputs = new Dictionary<string, bool>();
+        internal static Dictionary<string, int> Observations = [];
+        internal static Dictionary<string, bool> Inputs = [];
 
         /// <summary>
         /// Loads memory from the emulator, parses it as an integer and stores it in the Observations dictionary.
@@ -14,7 +14,9 @@
             // Do not update observations if the emulator is not running.
 
             if ( AIHawkForm.APISimpleton == null )
+            {
                 return;
+            }
 
             LogUtility.Log("Reading Memory...");
             Observations["P1 HP"] = AIHawkForm.APISimpleton.Memory.ReadS8(0xD24);
@@ -68,11 +70,7 @@
         /// <param name="i">Range(0f - 255f)</param>
         /// <returns>Range(0f - 1f)</returns>
         //TODO: This accepts an integer and shouldnt, but should never recieve a value of over 255 anyways...
-        internal static float NormalizeByte(int i)
-        {
-            return (float) i / 255f;
-        }
-
+        internal static float NormalizeByte(int i) => (float) i / 255f;
 
     }
 }

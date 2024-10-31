@@ -1,7 +1,5 @@
 ﻿using RLMatrix.Toolkit;
 
-
-
 namespace AIHawk
 {
     [RLMatrixEnvironment]
@@ -13,7 +11,7 @@ namespace AIHawk
         public BizHawkEnvironment()
         {
             Init( );
-            
+
         }
 
         [RLMatrixActionDiscrete(4)]
@@ -35,8 +33,6 @@ namespace AIHawk
                     MemoryHandler.Inputs.Add("P1 Up", true);
                     break;
             }
-            
-            
         }
         [RLMatrixActionDiscrete(8)]
         public void Action(int actions)
@@ -69,23 +65,17 @@ namespace AIHawk
                     MemoryHandler.Inputs.Add("P1 R", true);
                     break;
             }
-            
-            MemoryHandler.WriteInputs( );
-            
-        }
 
+            MemoryHandler.WriteInputs( );
+
+        }
 
         [RLMatrixReset]
         public void Init()
         {
             LogUtility.Log("MatrixReset: Init()");
-
-            //Stack overflow? Dead Loop?
-            //TODO: MAJOR issue, cannot reset emulator state on init. More Garbage In. More Garbage Out.
-            //AIHawkForm.APISimpleton?.SaveState.LoadSlot(1);
-
+            AIHawkForm.APISimpleton?.SaveState.LoadSlot(1);
             isDone = false;
-            
         }
 
         [RLMatrixObservation]
@@ -95,7 +85,10 @@ namespace AIHawk
 
             float[]? Obs = GetObservations( );
             if ( Obs == null )
+            {
                 return new[] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f }; // Ensure 16 observations are returned at all times so toolkit sets up NN correctly.
+            }
+
             return Obs;
         }
 
@@ -103,12 +96,18 @@ namespace AIHawk
         public float Reward()
         {
             LogUtility.Log("MatrixReward: Reward()");
-            if (MemoryHandler.Observations.Count == 0) return 0f;
+            if ( MemoryHandler.Observations.Count == 0 )
+            {
+                return 0f;
+            }
             // Garbage In. Garbage out. TODO: Make a better reward.
             float Reward = MemoryHandler.Observations["P1 HP"] - MemoryHandler.Observations["P2 HP"];
             // Does this even go here, "isDone" is so confusing in this context.
-            if( MemoryHandler.Observations["P1 HP"] < 1)
+            if ( MemoryHandler.Observations["P1 HP"] < 1 )
+            {
                 isDone = true;
+            }
+
             return Reward;
         }
 
@@ -123,9 +122,9 @@ namespace AIHawk
         {
 
             MemoryHandler.Observations.Clear( );
-            
+
             MemoryHandler.LoadObservations( );
-            
+
             return MemoryHandler.Observations.Count < 16
                 ? null
                 : ( [
@@ -146,8 +145,7 @@ namespace AIHawk
                 MemoryHandler.NormalizeByte(MemoryHandler.Observations["P2 Attack Flag 3"]),
                 MemoryHandler.NormalizeByte(MemoryHandler.Observations["P2 Attack Timer"])
             ] );
-            
-        }
 
+        }
     }
 }

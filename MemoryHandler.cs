@@ -66,6 +66,7 @@ namespace AIHawk
         internal static void WriteInputs()
         {
             AIHawkForm.APISimpleton.Joypad.Set(Inputs);
+            Inputs.Clear( );
         }
 
         /// <summary>

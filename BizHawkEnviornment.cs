@@ -23,6 +23,7 @@ namespace AIHawk
         [RLMatrixActionDiscrete(4)]
         public void Direction(int actions)
         {
+            Console.WriteLine("AI is pressing a direction.");
             switch ( actions )
             {
                 case 0:
@@ -38,12 +39,13 @@ namespace AIHawk
                     MemoryHandler.Inputs.Add("P1 Up", true);
                     break;
             }
-            Console.WriteLine("AI has pressed a direction.");
-
+            
+            
         }
         [RLMatrixActionDiscrete(8)]
         public void Action(int actions)
         {
+            Console.WriteLine("AI is pressing a button.");
             switch ( actions )
             {
                 case 0:
@@ -71,7 +73,7 @@ namespace AIHawk
                     MemoryHandler.Inputs.Add("P1 R", true);
                     break;
             }
-            Console.WriteLine("AI has pressed a button.");
+            
             MemoryHandler.WriteInputs( );
             
         }
@@ -94,6 +96,7 @@ namespace AIHawk
         public float[]? Observation()
         {
             Console.WriteLine("MatrixObservation: Observation()");
+
             float[]? Obs = GetObservations( );
             if ( Obs == null )
                 return new[] { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f }; // Ensure 16 observations are returned at all times so toolkit sets up NN correctly.

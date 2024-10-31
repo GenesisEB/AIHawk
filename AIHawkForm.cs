@@ -79,41 +79,49 @@ namespace AIHawk
 
             APISimpleton = EmulationAPI;
             Console.WriteLine("Setting Up " + APISimpleton.Emulation.GetGameInfo( ).Name);
-            if ( APISimpleton == null )
-            {
-                //TODO: Should throw an error, application will not work without the emulator.
-                Console.WriteLine("Emulator not found.");
-                return;
-            }
-            //If emulation is prepared, environment is ready for stepping. Create virtual environment.
-            if ( !APISimpleton.Emulation.GetGameInfo( ).IsNullInstance( ) )
-            {
-                Console.WriteLine("Loading env...");
-                APISimpleton.EmuClient.Pause( );
-                APISimpleton.SaveState.LoadSlot(1);
-                EnvPPO = new List<IEnvironmentAsync<float[]>> { new BizHawkEnvironment( ) };
-                MyAgentPPO = new LocalDiscreteRolloutAgent<float[]>(OptsPPO, EnvPPO);
-            }
+
+
         }
 
         /// <summary>
         /// Called after every emulation cycle has finished. Can be paused by pausing emulation. Can be advanced with frame advance.
         /// Currently setup to pause on start and frame advance manually with a hotkey in the emulator.
         /// </summary>
-        protected override void UpdateAfter()
+        protected override async void UpdateAfter()
         {
             //Check emergency stop button, allows running emulation without feeding the AI.
-            if ( IsAIRunning )
+            if ( IsAIRunning && MyAgentPPO != null)
             {
                 Console.WriteLine("Emulator: Step! AI On");
-                MyAgentPPO.Step( );
+                //Task.Run(() => MyAgentPPO.Step( )).Wait( );
+                await MyAgentPPO.Step( );
             }
         }
 
         private void ToggleAI(object sender, EventArgs e)
         {
             //APISimpleton.EmuClient.Unpause( ); Delayed StackOverflow Exception???
+
             IsAIRunning = !IsAIRunning;
+
+            if ( IsAIRunning )
+            {
+                if ( APISimpleton == null )
+                {
+                    //TODO: Should throw an error, application will not work without the emulator.
+                    Console.WriteLine("Emulator not found.");
+                    return;
+                }
+                if ( !APISimpleton.Emulation.GetGameInfo( ).IsNullInstance( ) )
+                {
+                    Console.WriteLine("Loading env...");
+                    APISimpleton.EmuClient.Pause( );
+                    APISimpleton.SaveState.LoadSlot(1);
+                    EnvPPO = new List<IEnvironmentAsync<float[]>> { new BizHawkEnvironment( ).RLInit( ) };
+                    MyAgentPPO = new LocalDiscreteRolloutAgent<float[]>(OptsPPO, EnvPPO);
+                }
+            }
+
             Button s = sender as Button;
             s.Text = "AI: " + IsAIRunning.ToString( );
         }

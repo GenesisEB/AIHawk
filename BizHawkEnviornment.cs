@@ -17,7 +17,7 @@ namespace AIHawk
         public BizHawkEnvironment()
         {
             Init( );
-            RLInit( );
+            
         }
 
         [RLMatrixActionDiscrete(4)]

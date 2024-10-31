@@ -87,14 +87,14 @@ namespace AIHawk
         /// Called after every emulation cycle has finished. Can be paused by pausing emulation. Can be advanced with frame advance.
         /// Currently setup to pause on start and frame advance manually with a hotkey in the emulator.
         /// </summary>
-        protected override async void UpdateAfter()
+        protected override  void UpdateAfter()
         {
             //Check emergency stop button, allows running emulation without feeding the AI.
             if ( IsAIRunning && MyAgentPPO != null)
             {
                 Console.WriteLine("Emulator: Step! AI On");
-                //Task.Run(() => MyAgentPPO.Step( )).Wait( );
-                await MyAgentPPO.Step( );
+                Task.Run(() => MyAgentPPO.Step( )).Wait( );
+                //await MyAgentPPO.Step( );
             }
         }
 

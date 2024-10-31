@@ -1,9 +1,5 @@
-﻿using OneOf;
-using RLMatrix;
-using RLMatrix.Toolkit;
+﻿using RLMatrix.Toolkit;
 
-using System;
-using static TorchSharp.torch;
 
 
 namespace AIHawk
@@ -23,7 +19,7 @@ namespace AIHawk
         [RLMatrixActionDiscrete(4)]
         public void Direction(int actions)
         {
-            Console.WriteLine("AI is pressing a direction.");
+            LogUtility.Log("AI is pressing a direction.");
             switch ( actions )
             {
                 case 0:
@@ -45,7 +41,7 @@ namespace AIHawk
         [RLMatrixActionDiscrete(8)]
         public void Action(int actions)
         {
-            Console.WriteLine("AI is pressing a button.");
+            LogUtility.Log("AI is pressing a button.");
             switch ( actions )
             {
                 case 0:
@@ -82,11 +78,11 @@ namespace AIHawk
         [RLMatrixReset]
         public void Init()
         {
-            Console.WriteLine("MatrixReset: Init()");
+            LogUtility.Log("MatrixReset: Init()");
 
             //Stack overflow? Dead Loop?
             //TODO: MAJOR issue, cannot reset emulator state on init. More Garbage In. More Garbage Out.
-            //AIHawkForm.APISimpleton?.SaveState.LoadSlot(1); 
+            //AIHawkForm.APISimpleton?.SaveState.LoadSlot(1);
 
             isDone = false;
             
@@ -95,7 +91,7 @@ namespace AIHawk
         [RLMatrixObservation]
         public float[]? Observation()
         {
-            Console.WriteLine("MatrixObservation: Observation()");
+            LogUtility.Log("MatrixObservation: Observation()");
 
             float[]? Obs = GetObservations( );
             if ( Obs == null )
@@ -106,19 +102,20 @@ namespace AIHawk
         [RLMatrixReward]
         public float Reward()
         {
-            Console.WriteLine("MatrixReward: Reward()");
+            LogUtility.Log("MatrixReward: Reward()");
             if (MemoryHandler.Observations.Count == 0) return 0f;
             // Garbage In. Garbage out. TODO: Make a better reward.
             float Reward = MemoryHandler.Observations["P1 HP"] - MemoryHandler.Observations["P2 HP"];
             // Does this even go here, "isDone" is so confusing in this context.
-            isDone = true;
+            if( MemoryHandler.Observations["P1 HP"] < 1)
+                isDone = true;
             return Reward;
         }
 
         [RLMatrixDone]
         public bool Done()
         {
-            Console.WriteLine("MatrixDone: Done()\n\n");
+            LogUtility.Log("MatrixDone: Done()\n\n");
             return isDone;
         }
 

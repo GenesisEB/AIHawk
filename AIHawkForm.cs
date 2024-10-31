@@ -3,9 +3,7 @@ using BizHawk.Client.EmuHawk;
 using BizHawk.Emulation.Common;
 using RLMatrix;
 using RLMatrix.Agents.Common;
-using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
+
 
 namespace AIHawk
 {
@@ -47,14 +45,14 @@ namespace AIHawk
         {
             // Used to Force Torch to start up to check for errors before loading game state. (Checks for natives in plugin location.)
             // TODO: catch these errors and handle it cleanly
-            Console.WriteLine("Setting CUDA Device...");
+            LogUtility.Log("Setting CUDA Device...");
             TorchSharp.torch.InitializeDeviceType(TorchSharp.DeviceType.CUDA);
 
             // Assign API Simpleton Reference.
             APISimpleton = EmulationAPI;
 
             //WinForm Setup for Plugin, See Interfaces
-            Console.WriteLine("Opening Form...");
+            LogUtility.Log("Opening Form...");
             ClientSize = new Size(480, 320);
             SuspendLayout( );
 
@@ -78,7 +76,7 @@ namespace AIHawk
         {
 
             APISimpleton = EmulationAPI;
-            Console.WriteLine("Setting Up " + APISimpleton.Emulation.GetGameInfo( ).Name);
+            LogUtility.Log("Setting Up " + APISimpleton.Emulation.GetGameInfo( ).Name);
 
 
         }
@@ -92,8 +90,13 @@ namespace AIHawk
             //Check emergency stop button, allows running emulation without feeding the AI.
             if ( IsAIRunning && MyAgentPPO != null)
             {
-                Console.WriteLine("Emulator: Step! AI On");
-                Task.Run(() => MyAgentPPO.Step( )).Wait( );
+                LogUtility.Log("Emulator: Step! AI On");
+                Task.Run(
+                    () => MyAgentPPO.Step( )).ContinueWith((t) =>
+                {
+                    if ( t.IsFaulted )
+                        throw t.Exception;
+                }).Wait( );
                 //await MyAgentPPO.Step( );
             }
         }
@@ -109,12 +112,12 @@ namespace AIHawk
                 if ( APISimpleton == null )
                 {
                     //TODO: Should throw an error, application will not work without the emulator.
-                    Console.WriteLine("Emulator not found.");
+                    LogUtility.Log("Emulator not found.");
                     return;
                 }
                 if ( !APISimpleton.Emulation.GetGameInfo( ).IsNullInstance( ) )
                 {
-                    Console.WriteLine("Loading env...");
+                    LogUtility.Log("Loading env...");
                     APISimpleton.EmuClient.Pause( );
                     APISimpleton.SaveState.LoadSlot(1);
                     EnvPPO = new List<IEnvironmentAsync<float[]>> { new BizHawkEnvironment( ).RLInit( ) };

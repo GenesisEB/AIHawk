@@ -1,11 +1,4 @@
-﻿using BizHawk.Client.Common;
-using BizHawk.Client.EmuHawk;
-using System;
-using System.Collections.Generic;
-using Tensorboard;
-
-
-namespace AIHawk
+﻿namespace AIHawk
 {
 
     internal static class MemoryHandler
@@ -23,7 +16,7 @@ namespace AIHawk
             if ( AIHawkForm.APISimpleton == null )
                 return;
 
-            Console.WriteLine("Reading Memory...");
+            LogUtility.Log("Reading Memory...");
             Observations["P1 HP"] = AIHawkForm.APISimpleton.Memory.ReadS8(0xD24);
             Observations["P1 X"] = AIHawkForm.APISimpleton.Memory.ReadS8(0x943);
             Observations["P1 Y"] = AIHawkForm.APISimpleton.Memory.ReadS8(0x993);
@@ -40,7 +33,7 @@ namespace AIHawk
             Observations["P2 Attack Flag 2"] = AIHawkForm.APISimpleton.Memory.ReadS8(0xD64);
             Observations["P2 Attack Flag 3"] = AIHawkForm.APISimpleton.Memory.ReadS8(0xD65);
             Observations["P2 Attack Timer"] = AIHawkForm.APISimpleton.Memory.ReadS8(0xD66);
-            Console.WriteLine("Finished Reading Memory...");
+            LogUtility.Log("Finished Reading Memory...");
             UIHelper.Observations.Text =
             "P1 HP" + AIHawkForm.APISimpleton.Memory.ReadS8(0xD24) + "\n" +
             "P1 X" + AIHawkForm.APISimpleton.Memory.ReadS8(0x943) + "\n" +

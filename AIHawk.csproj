@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<UseWindowsForms>true</UseWindowsForms>
+		<LangVersion>12.0</LangVersion>
+		<TargetFramework>net48</TargetFramework>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PlatformTarget>x64</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(BIZHAWK_HOME)' == '' ">
+		<BIZHAWK_HOME>$(ProjectDir)../../Bizhawk-2.10/</BIZHAWK_HOME><!-- if building EmuHawk from source, point to e.g. `$(ProjectDir)../BizHawk/output/` -->
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(BIZHAWK_DATA_HOME)' == '' ">
+		<BIZHAWK_DATA_HOME>$(BIZHAWK_HOME)</BIZHAWK_DATA_HOME><!-- ignore this; on NixOS these are different dirs -->
+	</PropertyGroup>
+	<ItemGroup>
+		
+		<PackageReference Include="Google.Protobuf" Version="3.21.9" />
+		
+		<PackageReference Include="libtorch-cuda-12.1-win-x64" Version="2.2.1.1">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		
+		<PackageReference Include="RLMatrix" Version="0.4.3.3" />
+		
+		<PackageReference Include="RLMatrix.Common" Version="0.4.3" />
+		<PackageReference Include="RLMatrix.Toolkit" Version="0.4.3.3">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+		<PackageReference Include="TorchSharp" Version="0.102.2">
+		  <IncludeAssets>all</IncludeAssets>
+		</PackageReference>
+		<Reference Include="BizHawk.Client.Common" HintPath="$(BIZHAWK_HOME)dll/BizHawk.Client.Common.dll" />
+		<Reference Include="BizHawk.Client.EmuHawk" HintPath="$(BIZHAWK_HOME)EmuHawk.exe" />
+		<Reference Include="BizHawk.Common" HintPath="$(BIZHAWK_HOME)dll/BizHawk.Common.dll" />
+		<Reference Include="BizHawk.Emulation.Common" HintPath="$(BIZHAWK_HOME)dll/BizHawk.Emulation.Common.dll" />
+		<Reference Include="BizHawk.WinForms.Controls" HintPath="$(BIZHAWK_HOME)dll/BizHawk.WinForms.Controls.dll" />
+    <Reference Include="BizHawk.Bizware.Graphics" HintPath="$(BIZHAWK_HOME)dll/BizHawk.Bizware.Graphics.dll" />
+    <Reference Include="SkiaSharp">
+      <HintPath>bin\Debug\net48\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="TorchSharp">
+      <HintPath>..\..\TorchSharp.dll</HintPath>
+    </Reference>
+    
+    
+	</ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Copy SourceFiles="$(OutputPath)$(MSBuildProjectName).dll" DestinationFolder="$(BIZHAWK_DATA_HOME)ExternalTools" />
+	</Target>
+
+</Project>

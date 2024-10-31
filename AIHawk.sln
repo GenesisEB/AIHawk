@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIHawk", "AIHawk.csproj", "{638DEA0B-45B7-435B-88F1-9064D7CDA466}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{638DEA0B-45B7-435B-88F1-9064D7CDA466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{638DEA0B-45B7-435B-88F1-9064D7CDA466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{638DEA0B-45B7-435B-88F1-9064D7CDA466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{638DEA0B-45B7-435B-88F1-9064D7CDA466}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {522373DC-3EDE-4FAF-BE93-04625DB3586B}
+	EndGlobalSection
+EndGlobal
